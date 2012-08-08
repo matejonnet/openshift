@@ -1,0 +1,44 @@
+=Running CapeDwarf on OpenShift=
+
+
+===Follow this instructions to run GAE applications on OpenShift PaaS.===
+
+# [https://openshift.redhat.com/app/account/new Register] for OpenShift
+# Follow the [https://openshift.redhat.com/app/getting_started instructions] to install '''client tools''' (step one)
+# Create a domain (step two on the link above)
+# Create JBoss AS applications
+
+<pre>rhc app create -t jbossas-7 -a mygaeapp</pre>
+	
+<ol><li value="5">
+Use files from [https://github.com/capedwarf/openshift this repo] to add CapeDwarf and dependent modules to JBoss AS.<br />
+Avoiding conflicts specify git options to prefer CapeDwarf repo content.
+</li></ol>
+
+<pre>
+cd mygaeapp
+git remote add capedwarf-openshift https://github.com/capedwarf/openshift.git
+git pull -s recursive -X theirs --depth=1 capedwarf-openshift master
+</pre>
+* Please be patient with pull, it takes a while, because it contains also an JBoss AS update.
+
+<ol><li value="6">
+Copy your GAE application to mygaeapp/deployments folder.<br />
+If you want to build your project using maven on OpenShift copy sources to '''src''' folder and remove '''skip_maven_build''' marker from ''mygaeapp''/.openshift/markers/ folder.</li>
+<li>Push CapeDwarf modules and your app to OpenShift using:</li>
+</ol>
+	
+<pre>
+git add deployments/*
+git commit -m"Deploy sample app."
+git push origin
+</pre>
+	
+If you are redeploying your app, replace archive file in deployments dir (or src if building on OpenShift) and commit/push changes to OpenShift:
+
+<pre>
+git commit -a -m"Added new feature xyz"
+git push origin
+</pre>
+
+Open your application in web browser &lt;your app name&gt;-&lt;your domain name&gt;.rhcloud.com
